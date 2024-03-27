@@ -1,0 +1,791 @@
+{
+  "name": "开源微信个人AI助手-OSEN",
+  "nodes": [
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $input.item.binary.content.mimeType }}",
+                    "rightValue": "audio/silk",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {}
+          ]
+        },
+        "options": {}
+      },
+      "id": "a806002e-08f9-4f2e-8f84-295721cac793",
+      "name": "fileType",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [
+        1140,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "903fd96c-86c3-4b05-9d7c-82e976d67fdf",
+              "leftValue": "={{ $('Webhook').item.json.body.type }}",
+              "rightValue": "file",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "ab25cd29-6816-4f00-ad9b-95f007afb45f",
+      "name": "isFile",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1000,
+        300
+      ],
+      "alwaysOutputData": false,
+      "notesInFlow": true,
+      "notes": "消息是文件还是文本"
+    },
+    {
+      "parameters": {
+        "content": "【需修改】将OSEN改成你希望能使用AI的人的微信昵称",
+        "height": 81.149879492335,
+        "width": 156.0587970595445
+      },
+      "id": "ad06682b-f25a-4d0a-8e8e-0e250a8c72ab",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        780,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "7d807437-1858-4b47-a550-2cedd05728e8",
+              "leftValue": "={{ $json.room.isEmpty() }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "284bf579-4f7d-4a3e-8751-9e52cb395e20",
+      "name": "isUser",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        580,
+        340
+      ],
+      "notesInFlow": true,
+      "notes": "判断甚至是否是个人发送，否则是群消息"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "7b5166ce-f258-4d69-b162-6bb08e3321b8",
+              "leftValue": "={{ $json.from.payload.name }}",
+              "rightValue": "OSEN",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "652fd1f2-9382-4c60-ad22-f8d9143e2413",
+      "name": "isMe",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        800,
+        320
+      ],
+      "notesInFlow": true,
+      "notes": "控制对哪些微信用户开放"
+    },
+    {
+      "parameters": {
+        "content": "【可选，将微信语音消息通过语音识别转成文字，不需要可以直接将节点链接的线去掉】\n1.需要使用 Azure API 密钥https://speech.microsoft.com/portal/speechtotexttool （免费用1年）放在第2个节点参数 Ocp-Apim-Subscription-Key 中\n\n2.第1个节点是将音频文件转为 wav,需要安装 https://hub.docker.com/r/kazhar/ffmpeg-api\n\n",
+        "height": 334.42979887828153,
+        "width": 458.10022434547125
+      },
+      "id": "d1b26fb9-6021-4bd3-8f17-36ccf5b1bd66",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1320,
+        -260
+      ]
+    },
+    {
+      "parameters": {
+        "content": "【需修改】将OSEN改成你希望能使用保存到Notion的人的微信昵称\n\n第一个条件是设置触发词，默认是4种触发：保存笔记|保存到 Notion|保存到notion|保存到概念",
+        "height": 190.24253652796716,
+        "width": 184.7673910162898
+      },
+      "id": "fcccb66f-64b6-42af-a569-7c93b0c71eb3",
+      "name": "Sticky Note2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1780,
+        380
+      ]
+    },
+    {
+      "parameters": {
+        "content": "【需修改】在 Credential 中添加你openai api key",
+        "height": 177.98555287347148,
+        "width": 192.56629330231743
+      },
+      "id": "4df1c12e-f92b-4d86-886c-0756283308b2",
+      "name": "Sticky Note3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2188.5165624173023,
+        440
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "chat",
+        "prompt": {
+          "messages": [
+            {
+              "content": "={{ $json.user_content.replaceAll('\\\\','\\\\\\\\').replaceAll('\"','\\\\\"').replaceAll('\\n','\\\\n') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "96394546-96e6-4eed-b053-ab9f4f2445a0",
+      "name": "OpenAI",
+      "type": "n8n-nodes-base.openAi",
+      "typeVersion": 1.1,
+      "position": [
+        2240,
+        600
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "qBuXYjw9136HH1OX",
+          "name": "OpenAi 官方"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "【需修改】1. 将 URL 中的 http://localhost:3001 改成你的 wechatbot-webhook 的地址\n2. 将 Token改成你部署时设置的 OGIN_API_TOKEN",
+        "height": 193.32831176998502,
+        "width": 212.20948363716363
+      },
+      "id": "f657a83b-87c3-4f58-949e-d9ae2369614c",
+      "name": "Sticky Note5",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2240,
+        -60
+      ]
+    },
+    {
+      "parameters": {
+        "content": "【需修改】1.在 Credential 中添加你的 Notion Secrets，获取地址：https://www.notion.so/my-integrations\n2. 然后在 notion 页面中添加这个 integrations\n3. 在Database中选择你的",
+        "height": 198.75694239071788,
+        "width": 221.02183441645295
+      },
+      "id": "54451649-be08-40c4-aa0e-e565d8b48180",
+      "name": "Sticky Note6",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2000,
+        -60
+      ]
+    },
+    {
+      "parameters": {
+        "content": "【需修改】1. 将 URL 中的 http://localhost:3001 改成你的 wechatbot-webhook 的地址\n2. 将 Token改成你部署时设置的 OGIN_API_TOKEN",
+        "height": 184.71573358296143,
+        "width": 205.0323351479773
+      },
+      "id": "8acb5533-ac66-457c-828c-8c8720d451f3",
+      "name": "Sticky Note8",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2400,
+        440
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:3001/webhook/msg/v2",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "你设置的token，没改的话默认是abcdefg123"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={ \n    \"to\": \"{{ $('getSource').item.json.from.payload.name }}\", \n    \"data\": {\n         \"content\": \"{{ $jmespath($json, \"choices[0].message.content || message\").replaceAll('\\\\','\\\\\\\\').replaceAll('\"','\\\"').replaceAll('\\n','\\\\n') }}\" \n    }\n}",
+        "options": {}
+      },
+      "id": "09d5ca5d-8c0c-4c47-9343-6fa677560477",
+      "name": "Respond to wechat text",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        2440,
+        600
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ $('Webhook').item.json.body.source }}",
+        "options": {
+          "includeBinary": true
+        }
+      },
+      "id": "e66c1d94-0072-423c-8d6a-c11723bd69e3",
+      "name": "getSource",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.2,
+      "position": [
+        360,
+        340
+      ],
+      "notesInFlow": true,
+      "notes": "转换source为json，方便提取用户名"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://eastus.stt.speech.microsoft.com/speech/recognition/conversation/cognitiveservices/v1",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "language",
+              "value": "zh-CN"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Ocp-Apim-Subscription-Key",
+              "value": "替换成你的Key"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Content-Type",
+              "value": "audio/wav; codecs=audio/pcm; samplerate=16000"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "binaryData",
+        "inputDataFieldName": "data",
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "id": "4a7dcef4-001f-4be3-b15c-4145f7755692",
+      "name": "azure_STT",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1580,
+        -80
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "19ded947-b0f2-4ca5-83c2-11a63442c8eb",
+              "leftValue": "={{ $jmespath($json, \"DisplayText || body.content || result[0] \") }}",
+              "rightValue": "保存笔记|保存到 Notion|保存到notion|保存到概念",
+              "operator": {
+                "type": "string",
+                "operation": "regex"
+              }
+            },
+            {
+              "id": "55a598f4-7c80-4cc1-a12a-1f03ba43de52",
+              "leftValue": "={{ $('getSource').item.json.from.payload.name }}",
+              "rightValue": "OSEN",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "831d0d27-2a97-414f-81b1-a8eb0d09c757",
+      "name": "isToNotion",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1820,
+        240
+      ],
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:3001/webhook/msg/v2",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "你设置的token，没改的话默认是abcdefg123"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={ \n    \"to\": \"{{ $('getSource').item.json.from.payload.name }}\", \n    \"data\": {\n         \"content\": \"😊已保存到 Inbox\" \n    }\n}",
+        "options": {}
+      },
+      "id": "933df465-f4db-4eaa-82db-f7980c90d9e6",
+      "name": "seed2wechat",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        2300,
+        120
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "3eb2e06e-1c08-4acd-911c-c2a66751462c",
+        "options": {}
+      },
+      "id": "34c89e61-922a-406a-a20c-e51fa8fb9546",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [
+        180,
+        340
+      ],
+      "webhookId": "3d4d2cc0-c692-478e-991d-530853bc6e7a",
+      "notesInFlow": true,
+      "notes": "接受微信消息"
+    },
+    {
+      "parameters": {
+        "fields": {
+          "values": [
+            {
+              "name": "user_content",
+              "stringValue": "={{ $jmespath($json, \"body.content || DisplayText || result[0] \") }}"
+            }
+          ]
+        },
+        "include": "none",
+        "options": {}
+      },
+      "id": "df29ffc9-a0be-406c-867e-dbbbf2d85b29",
+      "name": "user_content",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.2,
+      "position": [
+        2020,
+        600
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "databaseId": {
+          "__rl": true,
+          "value": "https://www.notion.so/0fe2f7de558b471eab07e9d871cdf4a9",
+          "mode": "url"
+        },
+        "title": "={{ $jmespath($json, \"DisplayText || body.content || result[0] \").replace('保存笔记。', '').replace('保存到 Notion。', '').replace('保存到notion。', '').replace('保存到概念。', '').replace('保存笔记，', '').replace('保存到 Notion，', '').replace('保存到notion，', '').replace('保存到概念，', '').replace('保存笔记', '').replace('保存到 Notion', '').replace('保存到notion', '').replace('保存到概念', '') }}{{ $json.result[0].replace('保存笔记，', '').replace('保存到 Notion，', '').replace('保存到notion，', '').replace('保存到概念，', '').replace('保存笔记', '').replace('保存到 Notion', '').replace('保存到notion', '').replace('保存到概念', '') }}",
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "Name|title",
+              "title": "={{ $jmespath($json, \"DisplayText || body.content || result[0] \").replace('保存笔记。', '').replace('保存到 Notion。', '').replace('保存到notion。', '').replace('保存到概念。', '').replace('保存笔记，', '').replace('保存到 Notion，', '').replace('保存到notion，', '').replace('保存到概念，', '').replace('保存笔记', '').replace('保存到 Notion', '').replace('保存到notion', '').replace('保存到概念', '') }}{{ $json.result[0].replace('保存笔记，', '').replace('保存到 Notion，', '').replace('保存到notion，', '').replace('保存到概念，', '').replace('保存笔记', '').replace('保存到 Notion', '').replace('保存到notion', '').replace('保存到概念', '') }}"
+            },
+            {
+              "key": "Description|rich_text",
+              "textContent": "from WeChat"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "578b38a7-bc98-4014-92de-7ca251971289",
+      "name": "Notion",
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.1,
+      "position": [
+        2060,
+        120
+      ],
+      "credentials": {
+        "notionApi": {
+          "id": "pj4hiGGW162860eg",
+          "name": "Notion account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:3009/convert/audio/to/wav",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "file",
+              "inputDataFieldName": "content"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "923981bb-bfb0-4dd7-858f-5240b261bfd2",
+      "name": "audio_converterAPI",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1380,
+        -80
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "content": "## 介绍\n此流程是个基础版，在这个基础上可以增加动态用户控制（谁能用），使用次数，或者将信息都保存在如 notion 中使用AI进行定时总结，可以发挥想象力。\n\n作者：[OSEN](https://twitter.com/osen77)\n更新时间：2024-03-28",
+        "height": 174.57774916443182,
+        "width": 510.70100642277913,
+        "color": 4
+      },
+      "id": "e499730c-ebd2-49de-bc92-79c761f31c8d",
+      "name": "Sticky Note4",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        160,
+        125.93375033079249
+      ]
+    }
+  ],
+  "pinData": {
+    "azure_STT": [
+      {
+        "json": {
+          "RecognitionStatus": "Success",
+          "Offset": 4700000,
+          "Duration": 47800000,
+          "DisplayText": "保存笔记，这是最后最后一次。"
+        }
+      }
+    ],
+    "user_content": [
+      {
+        "json": {
+          "user_content": "你好"
+        }
+      }
+    ],
+    "audio_converterAPI": [
+      {
+        "json": {
+          "corpus_no": "7342083680811405450",
+          "err_msg": "success.",
+          "err_no": 0,
+          "result": [
+            "再测试一下。"
+          ],
+          "sn": "30245148891709462069"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "fileType": {
+      "main": [
+        [
+          {
+            "node": "audio_converterAPI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "isFile": {
+      "main": [
+        [
+          {
+            "node": "fileType",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "isToNotion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "isUser": {
+      "main": [
+        [
+          {
+            "node": "isMe",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "isMe": {
+      "main": [
+        [
+          {
+            "node": "isFile",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Respond to wechat text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "getSource": {
+      "main": [
+        [
+          {
+            "node": "isUser",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "azure_STT": {
+      "main": [
+        [
+          {
+            "node": "isToNotion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "isToNotion": {
+      "main": [
+        [
+          {
+            "node": "Notion",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "user_content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "getSource",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "user_content": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notion": {
+      "main": [
+        [
+          {
+            "node": "seed2wechat",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "audio_converterAPI": {
+      "main": [
+        [
+          {
+            "node": "azure_STT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "wxnyXhRHH5fIaHO2"
+  },
+  "versionId": "eb1fba3b-d329-4efe-be7e-8a2a973b7103",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "dddd942fcc3fc9952ef86ef5bde33cb22ce89cf9c1c31fe96708a4b7bc7304fc"
+  },
+  "id": "S3z8ohNh2rV13Ktt",
+  "tags": [
+    {
+      "createdAt": "2024-03-27T16:13:11.451Z",
+      "updatedAt": "2024-03-27T16:13:11.451Z",
+      "id": "37Oxh6HY6Z77Gid5",
+      "name": "分享"
+    }
+  ]
+}
