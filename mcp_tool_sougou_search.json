@@ -1,0 +1,133 @@
+{
+  "name": "mcp-tool-sougou-search",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "query"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        40,
+        -60
+      ],
+      "id": "62cbd102-18c9-4bfc-99ec-9c8f93edc3ba",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6e292f92-2ae8-401a-8e7d-8314c40dc260",
+              "name": "output",
+              "value": "={{ $json.stdout.match(/\\[.*$/s) ? $json.stdout.match(/\\[.*$/s)[0]:\n$json.stdout\n}}",
+              "type": "array"
+            },
+            {
+              "id": "4b67cf35-8d4b-4a00-bcbc-b977dabb16f5",
+              "name": "time",
+              "value": "={{ $today.plus(1,'days').endOf('day').toUnixInteger() }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        460,
+        -60
+      ],
+      "id": "d8cb1d10-f9b1-48db-8726-2f35e171befd",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 引入 axios 模块\nconst axios = require('axios');\n\n// 获取输入数据\nconst input = $input.first().json;\nconst outputArray = input.output;\nconst expiration = input.time;\n\n// 短链接 API 配置\nconst apiUrl = 'https://url.toolpai.com/api/link/create';\nconst headers = {\n  'authorization': 'Bearer zx129054545', // 请替换为你的实际 token\n  'content-type': 'application/json',\n  'Cookie': 'sink_i18n_redirected=en-US'\n};\n\n// 异步函数，用于处理每个 URL\nasync function processUrl(item) {\n  if (item.url) {\n    try {\n      const payload = {\n        url: item.url,\n        expiration: expiration\n      };\n      const response = await axios.post(apiUrl, payload, { headers });\n      if (response.data && response.data.shortLink) {\n        item.url = response.data.shortLink;\n      }\n    } catch (error) {\n      console.error(`Error converting URL ${item.url}:`, error.message);\n      // 可以在这里选择如何处理错误，例如保留原始 URL 或设置为 null\n    }\n  }\n  return item;\n}\n\n// 使用 Promise.all 并行处理所有 URL\nconst processedOutput = await Promise.all(outputArray.map(processUrl));\n\n// 返回处理后的数据\nreturn [{ json: { output: processedOutput } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        680,
+        -60
+      ],
+      "id": "b82f6e41-0297-4b38-8c39-ae65e6155987",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "command": "=/data/venv/bin/python3 /usr/host_map/sougou_search.py \"{{ $json.query }}\""
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        260,
+        -60
+      ],
+      "id": "89533175-c5c8-493d-9721-ac52558f2b03",
+      "name": "Execute Command"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Execute Command",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Command": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "14be4b3b-f77f-43eb-a8ae-b3164550a05f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "dddd942fcc3fc9952ef86ef5bde33cb22ce89cf9c1c31fe96708a4b7bc7304fc"
+  },
+  "id": "dbG3sQ1jiVFuSNk0",
+  "tags": [
+    {
+      "createdAt": "2024-03-19T08:40:42.644Z",
+      "updatedAt": "2024-03-19T08:40:42.644Z",
+      "id": "YAhjyUcDzFPSKZaC",
+      "name": "AI"
+    }
+  ]
+}

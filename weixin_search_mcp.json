@@ -1,0 +1,93 @@
+{
+  "name": "search-mcp",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "search_internet"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 1,
+      "position": [
+        -80,
+        -260
+      ],
+      "id": "1f28478d-fb03-44be-b007-b85e1764e48c",
+      "name": "MCP Server Trigger",
+      "webhookId": "7e0c1fb2-aac7-4b26-b68c-08af5fa7a6af"
+    },
+    {
+      "parameters": {
+        "description": "Call this tool to search for articles from WeChat official accounts using Sogou search. The input should be a concise string representing the search query, ideally limited to 1-3 keywords for optimal results (e.g., \"n8n python\", \"AI 发展\"). Avoid long queries like \"n8n 安装 python 教程\".",
+        "workflowId": {
+          "__rl": true,
+          "value": "dbG3sQ1jiVFuSNk0",
+          "mode": "list",
+          "cachedResultName": "mcp-tool-sougou-search"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "query": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('query', ``, 'string') }}"
+          },
+          "matchingColumns": [
+            "query"
+          ],
+          "schema": [
+            {
+              "id": "query",
+              "displayName": "query",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        260,
+        -240
+      ],
+      "id": "1f9c2246-6c8d-4ec5-836d-cdbfbe5e75bc",
+      "name": "search_weixin_article"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "search_weixin_article": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "d9a96293-2a09-4cf6-8f10-e21f813a128d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "dddd942fcc3fc9952ef86ef5bde33cb22ce89cf9c1c31fe96708a4b7bc7304fc"
+  },
+  "id": "SYS5NUw1b8e3k4bl",
+  "tags": [
+    {
+      "createdAt": "2024-03-19T08:40:42.644Z",
+      "updatedAt": "2024-03-19T08:40:42.644Z",
+      "id": "YAhjyUcDzFPSKZaC",
+      "name": "AI"
+    }
+  ]
+}
